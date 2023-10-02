@@ -13,7 +13,8 @@ class BinTree {
         Key key;
         T data;
 
-        /*In order not to repeat elements already present in the tree,
+        /**
+         * In order not to repeat elements already present in the tree,
          * their presence will be simulated with the help of a counter
          */
         size_t counter;
@@ -25,7 +26,8 @@ class BinTree {
         Node(Key in_key, T in_data)
             : key(in_key), data(in_data), counter(1), left(0), right(0) {};
     public:
-        const Key& getKey() const { return key; }; //keys are not allowed to be changed.
+        //keys are not allowed to be changed.
+        const Key& getKey() const { return key; };
 
         T& getData() {return data; }
         const T& getData() const {return data; }
@@ -43,12 +45,14 @@ class BinTree {
     };
 
     Node *root; // root of the tree
+
+    // todo
     BinTree(const BinTree<Key, T> &other); //banned
 
 public:
     BinTree() : root(0) {}
     ~BinTree() { clear(); }
-    bool inline isEmpty() { return !root; }
+    bool empty() { return !root; }
 
     // methods will be recursive, not iterative
     void add(Key k, T d);
@@ -57,11 +61,13 @@ public:
     void print();
     void clear();
     bool contains(Key k);
+    size_t count(Key k);
 private:
-    void addToTree(Node* &curr_node, const Key &k, const T &d);
+    void addToTree(const Key &k, const T &d);
     void deleteNode(Node* &curr_node, const Key &k);
 
-    /*this method is not quite typical
+    /**
+     * this method is not quite typical
      * if the function does not find an element with such a key,
      * then it returns the expected parent
      * this will allow us to make it more useful for other methods
@@ -75,15 +81,15 @@ private:
 
 template <class Key, class T>
 void BinTree<Key, T>::add(Key k, T d) {
-    if (isEmpty()) { //if tree is empty create root
+    if (empty()) { //if tree is empty create root
         root = new Node(k, d);
     } else {
-        addToTree(root, k, d);
+        addToTree(k, d);
     }
 }
 
 template<class Key, class T>
-void BinTree<Key, T>::addToTree(BinTree::Node* &curr_node, const Key &k, const T &d) {
+void BinTree<Key, T>::addToTree(const Key &k, const T &d) {
     auto p = search(root, k);
     if (p->key == k) {
         p->counter++; //pretending to actually add a new element
@@ -94,12 +100,12 @@ void BinTree<Key, T>::addToTree(BinTree::Node* &curr_node, const Key &k, const T
 
 template<class Key, class T>
 void BinTree<Key, T>::remove(Key k) {
-    if (isEmpty()) {
+    if (empty()) {
         return;
     }
     Node* node_to_delete = search(root, k);
 
-    /*if it's the intended parent, there's nothing to delete
+    /* if it's the intended parent, there's nothing to delete
      * this is the same as calling contains() and got false
      */
     if (node_to_delete->key != k) {
@@ -139,12 +145,13 @@ void BinTree<Key, T>::deleteNode(Node* &curr_node, const Key &k) {
 
 
 template <class Key, class T>
-typename BinTree<Key, T>::Node* BinTree<Key, T>::find(Key k) {
+BinTree<Key, T>::Node* BinTree<Key, T>::find(Key k) {
     return search(root, k);
 }
 
 template <class Key, class T>
-typename BinTree<Key, T>::Node* BinTree<Key, T>::search(BinTree::Node *curr_node, const Key &k) {
+BinTree<Key, T>::Node*
+BinTree<Key, T>::search(BinTree::Node *curr_node, const Key &k) {
     if (!curr_node) {
         return nullptr;
     }
@@ -158,7 +165,8 @@ typename BinTree<Key, T>::Node* BinTree<Key, T>::search(BinTree::Node *curr_node
 }
 
 template <class Key, class T>
-typename BinTree<Key, T>::Node* BinTree<Key, T>::findMax(BinTree::Node *curr_node) {
+BinTree<Key, T>::Node*
+BinTree<Key, T>::findMax(BinTree::Node *curr_node) {
     return curr_node->right ? findMax(curr_node->right) : curr_node;
 }
 
@@ -173,7 +181,8 @@ void BinTree<Key, T>::print(const Node *curr_node) {
         return;
     print(curr_node->left);
     for (int i = 0; i < curr_node->counter; i++) {
-        std::cout << "[" << curr_node->key << "]: " << curr_node->data << std::endl;
+        std::cout << "[" << curr_node->key << "]: "
+        << curr_node->data << std::endl;
     }
     print(curr_node->right);
 }
@@ -194,7 +203,8 @@ void BinTree<Key, T>::clear(Node *curr_node) {
 }
 
 template <class Key, class T>
-typename BinTree<Key, T>::Node& BinTree<Key, T>::Node::operator=(const BinTree::Node &other) {
+BinTree<Key, T>::Node&
+BinTree<Key, T>::Node::operator=(const BinTree::Node &other) {
     if (&other == this)
         return *this;
     key = other.key;
@@ -205,10 +215,19 @@ typename BinTree<Key, T>::Node& BinTree<Key, T>::Node::operator=(const BinTree::
 
 template <class Key, class T>
 bool BinTree<Key, T>::contains(Key k) {
-    if (isEmpty()) {
+    if (empty()) {
         return false;
     }
     return search(root, k)->key == k;
 }
+
+template <class Key, class T>
+size_t BinTree<Key, T>::count(Key k) {
+    if (empty())
+        return 0;
+    auto res = search(root, k);
+    return res->key == k ? res->getCount() : 0;
+}
+
 
 #endif //REGISTRY_REGISTRY_H
