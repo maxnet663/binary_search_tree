@@ -145,12 +145,12 @@ void BinTree<Key, T>::deleteNode(Node* &curr_node, const Key &k) {
 
 
 template <class Key, class T>
-BinTree<Key, T>::Node* BinTree<Key, T>::find(Key k) {
+typename BinTree<Key, T>::Node* BinTree<Key, T>::find(Key k) {
     return search(root, k);
 }
 
 template <class Key, class T>
-BinTree<Key, T>::Node*
+typename BinTree<Key, T>::Node*
 BinTree<Key, T>::search(BinTree::Node *curr_node, const Key &k) {
     if (!curr_node) {
         return nullptr;
@@ -165,7 +165,7 @@ BinTree<Key, T>::search(BinTree::Node *curr_node, const Key &k) {
 }
 
 template <class Key, class T>
-BinTree<Key, T>::Node*
+typename BinTree<Key, T>::Node*
 BinTree<Key, T>::findMax(BinTree::Node *curr_node) {
     return curr_node->right ? findMax(curr_node->right) : curr_node;
 }
@@ -203,7 +203,7 @@ void BinTree<Key, T>::clear(Node *curr_node) {
 }
 
 template <class Key, class T>
-BinTree<Key, T>::Node&
+typename BinTree<Key, T>::Node&
 BinTree<Key, T>::Node::operator=(const BinTree::Node &other) {
     if (&other == this)
         return *this;
